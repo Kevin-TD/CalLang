@@ -1,0 +1,4 @@
+(executable
+ (name cl_compilation)
+ (modules file_utils string_utils hm_type default_values cl_compilation)
+ (libraries unix str))

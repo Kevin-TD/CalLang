@@ -1,0 +1,7 @@
+*_build
+*.cmi
+*.cmo
+credentials.json
+callang_docs.txt
+personal
+*.DS_Store
