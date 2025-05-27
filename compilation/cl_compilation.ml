@@ -13,6 +13,7 @@ This takes a .cal file and turns it into a version more understandable for cl_ex
   (* it works tho ... so thats pretty cool ... *)
 (* TODO: better error handling *)
 (* TODO: make sure A/P clock time cant be negative as that does not make sense *)
+(* TODO: if code error before it is appropriatae the send the link make sure we do not send the link to auth the app *)
 
 (* ...should this be an actual interpreter? thinking about it. *)
 
@@ -95,13 +96,17 @@ let parse_hm_int input_num_str =
         | (_, "") -> failwith "invalid time int! (2)"
         | ("", hr_str) ->
           let hr_int = int_of_string hr_str in
-          Hm_type.HrsMins (hr_int + hour_adjust, 0)
+          if hr_int = hour_adjust (* special case of 12P; do not add another 12 *)
+            then Hm_type.HrsMins (12, 0)
+          else Hm_type.HrsMins (hr_int + hour_adjust, 0)
         | (hr_str, min_str) ->
           let hrs_int = int_of_string hr_str in
           let mins_int = int_of_string min_str in
           if mins_int > 59 then
             failwith "Buddy ... Pal ..."
-          else
+          else if hrs_int = hour_adjust (* special case of 12P; do not add another 12 *)
+            then Hm_type.HrsMins (12, mins_int)
+          else 
             Hm_type.HrsMins (hrs_int + hour_adjust, mins_int)
       )
     | ("", mins_str) -> compute_time "0" mins_str
